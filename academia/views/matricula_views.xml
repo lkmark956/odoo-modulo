@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Matrícula -->
+    <record id="view_academia_matricula_form" model="ir.ui.view">
+        <field name="name">academia.matricula.form</field>
+        <field name="model">academia.matricula</field>
+        <field name="arch" type="xml">
+            <form string="Matrícula">
+                <header>
+                    <button name="action_confirm" string="Confirmar" type="object"
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_pay" string="Registrar Pago" type="object"
+                        invisible="state != 'confirmed'" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                        invisible="state in ['paid', 'cancelled']"/>
+                    <button name="action_draft" string="Volver a Borrador" type="object"
+                        invisible="state not in ['confirmed', 'cancelled']"/>
+                    <field name="state" widget="statusbar" 
+                        statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(academia.action_academia_facturacion)d" type="action"
+                            class="oe_stat_button" icon="fa-file-text-o"
+                            invisible="not factura_id">
+                            <field name="factura_id" widget="statinfo" string="Factura"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información del Alumno">
+                            <field name="alumno_id" options="{'no_create': True}"/>
+                            <field name="fecha_matricula"/>
+                        </group>
+                        <group string="Curso">
+                            <field name="curso_id"/>
+                            <field name="clase_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Fechas">
+                            <field name="fecha_inicio"/>
+                            <field name="fecha_fin"/>
+                        </group>
+                        <group string="Importes">
+                            <field name="importe_curso" readonly="1"/>
+                            <field name="descuento"/>
+                            <field name="importe_matricula"/>
+                            <field name="importe_total" readonly="1" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <group invisible="state == 'draft'">
+                        <group string="Pagos">
+                            <field name="importe_pagado" readonly="state == 'paid'"/>
+                            <field name="importe_pendiente" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Notas">
+                        <field name="notes" nolabel="1" placeholder="Notas sobre la matrícula..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Matrícula -->
+    <record id="view_academia_matricula_list" model="ir.ui.view">
+        <field name="name">academia.matricula.list</field>
+        <field name="model">academia.matricula</field>
+        <field name="arch" type="xml">
+            <list string="Matrículas" 
+                decoration-info="state == 'draft'"
+                decoration-warning="state == 'confirmed'"
+                decoration-success="state == 'paid'"
+                decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="fecha_matricula"/>
+                <field name="alumno_id"/>
+                <field name="curso_id"/>
+                <field name="clase_id" optional="show"/>
+                <field name="importe_total" sum="Total"/>
+                <field name="importe_pendiente" sum="Pendiente"/>
+                <field name="state" widget="badge" 
+                    decoration-info="state == 'draft'"
+                    decoration-warning="state == 'confirmed'"
+                    decoration-success="state == 'paid'"
+                    decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Matrícula -->
+    <record id="view_academia_matricula_search" model="ir.ui.view">
+        <field name="name">academia.matricula.search</field>
+        <field name="model">academia.matricula</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Matrículas">
+                <field name="name"/>
+                <field name="alumno_id"/>
+                <field name="curso_id"/>
+                <field name="clase_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Secuencia para Matrículas -->
+    <record id="seq_academia_matricula" model="ir.sequence">
+        <field name="name">Secuencia Matrícula Academia</field>
+        <field name="code">academia.matricula</field>
+        <field name="prefix">MAT/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Acción de Matrícula -->
+    <record id="action_academia_matricula" model="ir.actions.act_window">
+        <field name="name">Matrículas</field>
+        <field name="res_model">academia.matricula</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primera matrícula!
+            </p>
+            <p>
+                Gestiona las matrículas de los alumnos en los diferentes cursos.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Matrícula -->
+    <menuitem id="menu_academia_matricula"
+        name="Matrículas"
+        parent="academia.menu_academia_root"
+        action="action_academia_matricula"
+        sequence="25"/>
+</odoo>

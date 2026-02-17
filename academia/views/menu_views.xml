@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú Principal de la Academia -->
+    <menuitem 
+        id="menu_academia_root"
+        name="Academia"
+        sequence="10"
+        web_icon="academia,static/description/icon.png"/>
+
+    <!-- Submenú Planificación (Calendario y Kanban) -->
+    <menuitem 
+        id="menu_academia_planning"
+        name="Planificación"
+        parent="menu_academia_root"
+        sequence="5"/>
+
+    <!-- Submenús -->
+    <menuitem 
+        id="menu_academia_management"
+        name="Gestión Académica"
+        parent="menu_academia_root"
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_academia_people"
+        name="Personas"
+        parent="menu_academia_root"
+        sequence="20"/>
+
+    <menuitem 
+        id="menu_academia_billing"
+        name="Facturación"
+        parent="menu_academia_root"
+        sequence="30"/>
+
+    <menuitem 
+        id="menu_academia_config"
+        name="Configuración"
+        parent="menu_academia_root"
+        sequence="100"/>
+</odoo>

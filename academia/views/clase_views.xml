@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Clase -->
+    <record id="view_academia_clase_form" model="ir.ui.view">
+        <field name="name">academia.clase.form</field>
+        <field name="model">academia.clase</field>
+        <field name="arch" type="xml">
+            <form string="Clase">
+                <header>
+                    <button name="action_confirm" string="Confirmar" type="object"
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_start" string="Iniciar" type="object"
+                        invisible="state != 'confirmed'" class="btn-primary"/>
+                    <button name="action_done" string="Finalizar" type="object"
+                        invisible="state != 'in_progress'" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                        invisible="state in ['done', 'cancelled']"/>
+                    <field name="state" widget="statusbar" 
+                        statusbar_visible="draft,confirmed,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sesiones" type="object"
+                            class="oe_stat_button" icon="fa-calendar">
+                            <field name="total_sesiones" widget="statinfo" string="Sesiones"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre del grupo..."/>
+                        </h1>
+                        <h3>
+                            <field name="code" placeholder="Código..."/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Información">
+                            <field name="curso_id"/>
+                            <field name="profesor_id"/>
+                            <field name="room"/>
+                            <field name="nivel"/>
+                        </group>
+                        <group string="Capacidad">
+                            <field name="max_students"/>
+                            <field name="total_alumnos"/>
+                            <field name="plazas_disponibles"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Fechas">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                        <group string="Horario">
+                            <field name="schedule"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                        </group>
+                    </group>
+                    <group string="Días de Clase">
+                        <div class="d-flex gap-3">
+                            <field name="monday"/>
+                            <field name="tuesday"/>
+                            <field name="wednesday"/>
+                            <field name="thursday"/>
+                            <field name="friday"/>
+                            <field name="saturday"/>
+                            <field name="sunday"/>
+                        </div>
+                    </group>
+                    <notebook>
+                        <page string="Alumnos" name="alumnos">
+                            <field name="alumno_ids">
+                                <list>
+                                    <field name="display_name"/>
+                                    <field name="email"/>
+                                    <field name="phone"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Sesiones" name="sesiones">
+                            <field name="sesion_ids">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="duration"/>
+                                    <field name="topic"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Clase -->
+    <record id="view_academia_clase_list" model="ir.ui.view">
+        <field name="name">academia.clase.list</field>
+        <field name="model">academia.clase</field>
+        <field name="arch" type="xml">
+            <list string="Clases"
+                decoration-info="state == 'draft'"
+                decoration-primary="state == 'confirmed'"
+                decoration-success="state == 'in_progress'"
+                decoration-muted="state in ['done', 'cancelled']">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="curso_id"/>
+                <field name="nivel" optional="show"/>
+                <field name="profesor_id"/>
+                <field name="schedule"/>
+                <field name="dias_semana"/>
+                <field name="start_time" widget="float_time" optional="hide"/>
+                <field name="end_time" widget="float_time" optional="hide"/>
+                <field name="room" optional="hide"/>
+                <field name="total_alumnos"/>
+                <field name="max_students" optional="hide"/>
+                <field name="plazas_disponibles"/>
+                <field name="total_sesiones" optional="hide"/>
+                <field name="state" widget="badge"
+                    decoration-info="state == 'draft'"
+                    decoration-primary="state == 'confirmed'"
+                    decoration-success="state == 'in_progress'"
+                    decoration-muted="state == 'done'"
+                    decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Kanban de Clase -->
+    <record id="view_academia_clase_kanban" model="ir.ui.view">
+        <field name="name">academia.clase.kanban</field>
+        <field name="model">academia.clase</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="curso_id"/>
+                <field name="nivel"/>
+                <field name="profesor_id"/>
+                <field name="schedule"/>
+                <field name="dias_semana"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="room"/>
+                <field name="total_alumnos"/>
+                <field name="max_students"/>
+                <field name="plazas_disponibles"/>
+                <field name="total_sesiones"/>
+                <field name="state"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <progressbar field="state" colors='{"draft": "muted", "confirmed": "info", "in_progress": "success", "done": "secondary", "cancelled": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-1">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <span class="o_kanban_record_subtitle text-muted">
+                                            [<field name="code"/>]
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_top_image">
+                                        <field name="profesor_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                                <div class="mb-1">
+                                    <span class="badge text-bg-primary">
+                                        <field name="curso_id"/>
+                                    </span>
+                                    <span class="badge text-bg-secondary ms-1">
+                                        <field name="nivel"/>
+                                    </span>
+                                </div>
+                                <div class="text-muted mb-1">
+                                    <i class="fa fa-clock-o me-1"/>
+                                    <field name="schedule"/>
+                                </div>
+                                <div class="text-muted mb-1">
+                                    <i class="fa fa-calendar me-1"/>
+                                    <field name="dias_semana"/>
+                                    <span class="ms-2">
+                                        <field name="start_time" widget="float_time"/> - 
+                                        <field name="end_time" widget="float_time"/>
+                                    </span>
+                                </div>
+                                <div t-if="record.room.value" class="text-muted mb-1">
+                                    <i class="fa fa-map-marker me-1"/> <field name="room"/>
+                                </div>
+                                <div class="text-muted mb-1">
+                                    <i class="fa fa-calendar-check-o me-1"/>
+                                    <field name="start_date"/> 
+                                    <span t-if="record.end_date.value">
+                                        - <field name="end_date"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge" t-attf-class="#{record.plazas_disponibles.raw_value &lt;= 0 ? 'text-bg-danger' : (record.plazas_disponibles.raw_value &lt;= 3 ? 'text-bg-warning' : 'text-bg-success')}">
+                                            <i class="fa fa-users me-1"/>
+                                            <field name="total_alumnos"/>/<field name="max_students"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span class="badge text-bg-info">
+                                            <i class="fa fa-calendar me-1"/>
+                                            <field name="total_sesiones"/> sesiones
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Clase (Mejorada) -->
+    <record id="view_academia_clase_search" model="ir.ui.view">
+        <field name="name">academia.clase.search</field>
+        <field name="model">academia.clase</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Clases">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="curso_id"/>
+                <field name="profesor_id"/>
+                <field name="room"/>
+                <separator/>
+                <filter string="Activas" name="active_classes" 
+                    domain="[('state', 'in', ['confirmed', 'in_progress'])]"/>
+                <filter string="Con Plazas" name="available" 
+                    domain="[('plazas_disponibles', '>', 0)]"/>
+                <separator/>
+                <filter string="Borrador" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmadas" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="En Curso" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Finalizadas" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Canceladas" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter string="Mañana" name="morning" domain="[('schedule', '=', 'morning')]"/>
+                <filter string="Tarde" name="afternoon" domain="[('schedule', '=', 'afternoon')]"/>
+                <filter string="Noche" name="evening" domain="[('schedule', '=', 'evening')]"/>
+                <filter string="Fin de Semana" name="weekend" domain="[('schedule', '=', 'weekend')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Curso" name="group_curso" context="{'group_by': 'curso_id'}"/>
+                    <filter string="Profesor" name="group_profesor" context="{'group_by': 'profesor_id'}"/>
+                    <filter string="Nivel" name="group_nivel" context="{'group_by': 'nivel'}"/>
+                    <filter string="Horario" name="group_schedule" context="{'group_by': 'schedule'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Clase -->
+    <record id="action_academia_clase" model="ir.actions.act_window">
+        <field name="name">Clases</field>
+        <field name="res_model">academia.clase</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_academia_clase_search"/>
+        <field name="context">{'search_default_active_classes': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primera clase!
+            </p>
+            <p>
+                Las clases representan grupos de alumnos con horarios específicos.
+                Organiza las clases por estado usando la vista Kanban.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Clase -->
+    <menuitem 
+        id="menu_academia_clase"
+        name="Clases"
+        parent="menu_academia_management"
+        action="action_academia_clase"
+        sequence="20"/>
+
+    <!-- Menú Tablero Clases (en sección Planificación) -->
+    <menuitem 
+        id="menu_academia_clase_planning"
+        name="Tablero Clases"
+        parent="menu_academia_planning"
+        action="action_academia_clase"
+        sequence="30"/>
+</odoo>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Curso -->
+    <record id="view_academia_curso_form" model="ir.ui.view">
+        <field name="name">academia.curso.form</field>
+        <field name="model">academia.curso</field>
+        <field name="arch" type="xml">
+            <form string="Curso">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sesiones" type="object"
+                            class="oe_stat_button" icon="fa-calendar">
+                            <field name="total_sesiones" widget="statinfo" string="Sesiones"/>
+                        </button>
+                        <button name="action_view_clases" type="object"
+                            class="oe_stat_button" icon="fa-users">
+                            <field name="total_alumnos" widget="statinfo" string="Alumnos"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre del curso..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información General">
+                            <field name="nivel"/>
+                            <field name="price"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción" name="description">
+                            <field name="description" placeholder="Describe el contenido del curso..."/>
+                        </page>
+                        <page string="Sesiones" name="sessions">
+                            <field name="sesion_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="profesor_id"/>
+                                    <field name="duration"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Clases" name="classes">
+                            <field name="clase_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="profesor_id"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Curso -->
+    <record id="view_academia_curso_list" model="ir.ui.view">
+        <field name="name">academia.curso.list</field>
+        <field name="model">academia.curso</field>
+        <field name="arch" type="xml">
+            <list string="Cursos"
+                decoration-success="active == True"
+                decoration-muted="active == False">
+                <field name="name"/>
+                <field name="nivel" widget="badge"
+                    decoration-info="nivel in ['a1', 'a2']"
+                    decoration-primary="nivel in ['b1', 'b2']"
+                    decoration-success="nivel in ['c1', 'c2']"/>
+                <field name="price" widget="monetary"/>
+                <field name="total_sesiones"/>
+                <field name="total_alumnos"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Kanban de Curso -->
+    <record id="view_academia_curso_kanban" model="ir.ui.view">
+        <field name="name">academia.curso.kanban</field>
+        <field name="model">academia.curso</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="nivel" class="o_kanban_small_column" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="nivel"/>
+                <field name="price"/>
+                <field name="total_sesiones"/>
+                <field name="total_alumnos"/>
+                <field name="active"/>
+                <field name="description"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-2">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title fs-5">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge fs-6" t-attf-class="#{record.nivel.raw_value in ['a1', 'a2'] ? 'text-bg-info' : (record.nivel.raw_value in ['b1', 'b2'] ? 'text-bg-primary' : 'text-bg-success')}">
+                                        <field name="nivel"/>
+                                    </span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="fw-bold text-primary fs-5">
+                                        <field name="price" widget="monetary"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-3">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge text-bg-secondary me-1">
+                                            <i class="fa fa-calendar me-1"/>
+                                            <field name="total_sesiones"/> sesiones
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span class="badge text-bg-info">
+                                            <i class="fa fa-users me-1"/>
+                                            <field name="total_alumnos"/> alumnos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Curso (Mejorada) -->
+    <record id="view_academia_curso_search" model="ir.ui.view">
+        <field name="name">academia.curso.search</field>
+        <field name="model">academia.curso</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Cursos">
+                <field name="name"/>
+                <field name="nivel"/>
+                <field name="description"/>
+                <separator/>
+                <filter string="Activos" name="active_courses" domain="[('active', '=', True)]"/>
+                <filter string="Archivados" name="archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Principiante (A1-A2)" name="beginner" domain="[('nivel', 'in', ['a1', 'a2'])]"/>
+                <filter string="Intermedio (B1-B2)" name="intermediate" domain="[('nivel', 'in', ['b1', 'b2'])]"/>
+                <filter string="Avanzado (C1-C2)" name="advanced" domain="[('nivel', 'in', ['c1', 'c2'])]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Nivel" name="group_nivel" context="{'group_by': 'nivel'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Curso -->
+    <record id="action_academia_curso" model="ir.actions.act_window">
+        <field name="name">Cursos</field>
+        <field name="res_model">academia.curso</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_academia_curso_search"/>
+        <field name="context">{'search_default_active_courses': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primer curso!
+            </p>
+            <p>
+                Los cursos están organizados por nivel según el Marco Común Europeo.
+                Usa la vista Kanban para ver los cursos agrupados por nivel.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Curso -->
+    <menuitem 
+        id="menu_academia_curso"
+        name="Cursos"
+        parent="menu_academia_management"
+        action="action_academia_curso"
+        sequence="10"/>
+</odoo>

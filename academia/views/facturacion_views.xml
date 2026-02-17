@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Secuencia para Facturas -->
+    <record id="seq_academia_facturacion" model="ir.sequence">
+        <field name="name">Factura Academia</field>
+        <field name="code">academia.facturacion</field>
+        <field name="prefix">FAC/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Vista Formulario de Facturación -->
+    <record id="view_academia_facturacion_form" model="ir.ui.view">
+        <field name="name">academia.facturacion.form</field>
+        <field name="model">academia.facturacion</field>
+        <field name="arch" type="xml">
+            <form string="Factura">
+                <header>
+                    <button name="action_confirm" string="Confirmar" type="object"
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_pay" string="Registrar Pago" type="object"
+                        invisible="state not in ['pending', 'overdue']" class="btn-success"/>
+                    <button name="action_cancel" string="Cancelar" type="object"
+                        invisible="state in ['paid', 'cancelled']"/>
+                    <button name="action_draft" string="Volver a Borrador" type="object"
+                        invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" 
+                        statusbar_visible="draft,pending,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información General">
+                            <field name="alumno_id"/>
+                            <field name="alumno_email"/>
+                            <field name="alumno_phone"/>
+                        </group>
+                        <group string="Detalles">
+                            <field name="invoice_type"/>
+                            <field name="curso_id"/>
+                            <field name="clase_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Importes">
+                            <field name="concept"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group string="Fechas">
+                            <field name="date"/>
+                            <field name="due_date"/>
+                            <field name="payment_date"/>
+                            <field name="is_overdue" invisible="1"/>
+                            <field name="days_overdue" invisible="not is_overdue"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción" name="description">
+                            <field name="description" placeholder="Descripción detallada..."/>
+                        </page>
+                        <page string="Notas" name="notas">
+                            <field name="notes" placeholder="Notas internas..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Facturación -->
+    <record id="view_academia_facturacion_list" model="ir.ui.view">
+        <field name="name">academia.facturacion.list</field>
+        <field name="model">academia.facturacion</field>
+        <field name="arch" type="xml">
+            <list string="Facturas" decoration-danger="state == 'overdue'"
+                decoration-success="state == 'paid'"
+                decoration-warning="state == 'pending'"
+                decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="alumno_id"/>
+                <field name="concept"/>
+                <field name="amount" widget="monetary" sum="Total"/>
+                <field name="due_date"/>
+                <field name="payment_date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Facturación -->
+    <record id="view_academia_facturacion_search" model="ir.ui.view">
+        <field name="name">academia.facturacion.search</field>
+        <field name="model">academia.facturacion</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Facturas">
+                <field name="name"/>
+                <field name="alumno_id"/>
+                <field name="concept"/>
+                <field name="curso_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Facturación -->
+    <record id="action_academia_facturacion" model="ir.actions.act_window">
+        <field name="name">Facturas</field>
+        <field name="res_model">academia.facturacion</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_academia_facturacion_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primera factura!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Facturación -->
+    <menuitem 
+        id="menu_academia_facturacion"
+        name="Facturas"
+        parent="menu_academia_billing"
+        action="action_academia_facturacion"
+        sequence="10"/>
+</odoo>

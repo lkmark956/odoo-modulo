@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Profesor -->
+    <record id="view_academia_profesor_form" model="ir.ui.view">
+        <field name="name">academia.profesor.form</field>
+        <field name="model">academia.profesor</field>
+        <field name="arch" type="xml">
+            <form string="Profesor">
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger" 
+                        invisible="active"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre..."/>
+                            <field name="apellidos" placeholder="Apellidos..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información Personal">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="specialization"/>
+                        </group>
+                        <group string="Sistema">
+                            <field name="user_id"/>
+                            <field name="total_clases"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Titulación" name="titulacion">
+                            <field name="titulacion" placeholder="Títulos y certificaciones..."/>
+                        </page>
+                        <page string="Cursos que Imparte" name="cursos">
+                            <field name="curso_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Clases Asignadas" name="clases">
+                            <field name="clase_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="curso_id"/>
+                                    <field name="schedule"/>
+                                    <field name="total_alumnos"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Profesor -->
+    <record id="view_academia_profesor_list" model="ir.ui.view">
+        <field name="name">academia.profesor.list</field>
+        <field name="model">academia.profesor</field>
+        <field name="arch" type="xml">
+            <list string="Profesores">
+                <field name="display_name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="specialization"/>
+                <field name="total_clases"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Profesor -->
+    <record id="view_academia_profesor_search" model="ir.ui.view">
+        <field name="name">academia.profesor.search</field>
+        <field name="model">academia.profesor</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Profesores">
+                <field name="name"/>
+                <field name="apellidos"/>
+                <field name="email"/>
+                <field name="specialization"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Profesor -->
+    <record id="action_academia_profesor" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">academia.profesor</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_academia_profesor_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra tu primer profesor!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Profesor -->
+    <menuitem 
+        id="menu_academia_profesor"
+        name="Profesores"
+        parent="menu_academia_people"
+        action="action_academia_profesor"
+        sequence="10"/>
+</odoo>

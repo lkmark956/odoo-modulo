@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_academia_curso_user,academia.curso.user,model_academia_curso,base.group_user,1,1,1,1
+access_academia_profesor_user,academia.profesor.user,model_academia_profesor,base.group_user,1,1,1,1
+access_academia_alumno_user,academia.alumno.user,model_academia_alumno,base.group_user,1,1,1,1
+access_academia_clase_user,academia.clase.user,model_academia_clase,base.group_user,1,1,1,1
+access_academia_sesion_user,academia.sesion.user,model_academia_sesion,base.group_user,1,1,1,1
+access_academia_facturacion_user,academia.facturacion.user,model_academia_facturacion,base.group_user,1,1,1,1
+access_academia_matricula_user,academia.matricula.user,model_academia_matricula,base.group_user,1,1,1,1

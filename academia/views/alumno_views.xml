@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Formulario de Alumno -->
+    <record id="view_academia_alumno_form" model="ir.ui.view">
+        <field name="name">academia.alumno.form</field>
+        <field name="model">academia.alumno</field>
+        <field name="arch" type="xml">
+            <form string="Alumno">
+                <header>
+                    <button name="action_enroll" string="Matricular" type="object"
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_activate" string="Activar" type="object"
+                        invisible="state != 'enrolled'" class="btn-primary"/>
+                    <field name="state" widget="statusbar" 
+                        statusbar_visible="draft,enrolled,active"/>
+                </header>
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger" 
+                        invisible="active"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre..."/>
+                            <field name="apellidos" placeholder="Apellidos..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Información Personal">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="dni"/>
+                            <field name="birthdate"/>
+                            <field name="age"/>
+                        </group>
+                        <group string="Inscripción">
+                            <field name="enrollment_date"/>
+                            <field name="saldo_pendiente" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="Dirección">
+                        <field name="address"/>
+                    </group>
+                    <notebook>
+                        <page string="Clases" name="clases">
+                            <field name="clase_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Sesiones" name="sesiones">
+                            <field name="sesion_ids">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="curso_id"/>
+                                    <field name="profesor_id"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Facturas" name="facturas">
+                            <field name="factura_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="concept"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notas" name="notas">
+                            <field name="notes" placeholder="Notas internas sobre el alumno..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Lista de Alumno -->
+    <record id="view_academia_alumno_list" model="ir.ui.view">
+        <field name="name">academia.alumno.list</field>
+        <field name="model">academia.alumno</field>
+        <field name="arch" type="xml">
+            <list string="Alumnos" decoration-warning="saldo_pendiente > 0">
+                <field name="display_name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="enrollment_date"/>
+                <field name="state"/>
+                <field name="saldo_pendiente" widget="monetary"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista Búsqueda de Alumno -->
+    <record id="view_academia_alumno_search" model="ir.ui.view">
+        <field name="name">academia.alumno.search</field>
+        <field name="model">academia.alumno</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Alumnos">
+                <field name="name"/>
+                <field name="apellidos"/>
+                <field name="email"/>
+                <field name="dni"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción de Alumno -->
+    <record id="action_academia_alumno" model="ir.actions.act_window">
+        <field name="name">Alumnos</field>
+        <field name="res_model">academia.alumno</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_academia_alumno_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Registra tu primer alumno!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú de Alumno -->
+    <menuitem 
+        id="menu_academia_alumno"
+        name="Alumnos"
+        parent="menu_academia_people"
+        action="action_academia_alumno"
+        sequence="20"/>
+</odoo>
